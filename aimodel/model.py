@@ -16,14 +16,14 @@ def generate_frames(cap):
     fall = False
     detector = pm.poseDetector()
     pTime = 0
-    
+
     while True:
         success, img = cap.read()
         img = cv2.resize(img, (1280, 550))
         # img = cv2.imread("AiTrainer/test.jpg")
         img = detector.findPose(img, False)
         lmList = detector.findPosition(img, False)
-        #print(lmList)
+        # print(lmList)
         if len(lmList) != 0:
             # Right Arm
             angle = detector.findAngle(img, 12, 24, 26)
@@ -33,7 +33,7 @@ def generate_frames(cap):
                 fall = True
             else:
                 fall = False
-            #print(fall)     
+            # print(fall)
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
@@ -41,11 +41,14 @@ def generate_frames(cap):
                     (255, 0, 0), 5)
         ret, buffer = cv2.imencode('.jpg', img)
         frame = buffer.tobytes()
-        yield(b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/video1')
 def video1():
@@ -54,5 +57,6 @@ def video1():
 # def video2():
 #     return Response(generate_frames(cap2), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port= 8000)
+    app.run(debug=True, host='0.0.0.0', port=8000)
