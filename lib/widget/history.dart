@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safetycare/widget/appbar.dart';
 
 class Hitory extends StatefulWidget {
   const Hitory({super.key});
@@ -10,8 +11,8 @@ class Hitory extends StatefulWidget {
 class _HitoryState extends State<Hitory> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Hitory'),
+    return Scaffold(
+      appBar: const SafetyCallAppBar(appBarTitle: "History"),
     );
   }
 }

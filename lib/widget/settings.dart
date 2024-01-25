@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safetycare/widget/appbar.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -10,8 +11,8 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Settings'),
+    return Scaffold(
+      appBar: const SafetyCallAppBar(appBarTitle: "Settings"),
     );
   }
 }
