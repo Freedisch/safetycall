@@ -128,6 +128,34 @@ def json_to_xml(json_data, parent):
     else:
         parent.text = str(json_data)
 
+#HEAVY REVERSE ENGINEERING SOLUTION TO READ DATA AND FORMAT DATA FROM XML FILES #PROUD_of_THAT
+def reverst_data():
+    with open('output.xml', 'r') as file:
+        data_xml = file.read()
+
+    # Extract the name from the data XML
+    data = json.loads(ET.fromstring(data_xml).text)[0]
+    name = data['name']
+    print(data, name)
+
+    with open('response.xml', 'r') as file:
+        response_xml = file.read()
+
+    # Replace the placeholder with the extracted name
+    response_tree = ET.fromstring(response_xml)
+    say_element = response_tree.find('.//Say')
+    if say_element is not None:
+        say_element.text = say_element.text.replace('Friend', name)
+
+    # Save the modified XML
+    # with open('response.xml', 'w') as file:
+    #     file.write(ET.tostring(response_tree).decode('utf-8'))
+    output_xml = ET.tostring(response_tree, encoding='utf-8').decode('utf-8')
+    output_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + output_xml
+
+    with open('response.xml', 'w') as file:
+        file.write(output_xml)
+
 
 
 @app.route('/call')
