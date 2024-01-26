@@ -3,12 +3,13 @@ import cv2
 import mediapipe as mp
 import time
 
+
 app = Flask(__name__)
 
 mpDraw = mp.solutions.drawing_utils
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
-cap1 = cv2.VideoCapture(1)
+cap1 = cv2.VideoCapture(0)
 pTime = 0
 
 MIN_HEIGHT = 0.5  # adjust this value to change the threshold for detecting fall
@@ -82,6 +83,15 @@ def video2():
 def index():
     return render_template('index.html')
 
+
+
+# Your Account SID and Auth Token from console.twilio.com
+
+
+
+@app.route('/call')
+def call():
+    return Response("okay")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)
