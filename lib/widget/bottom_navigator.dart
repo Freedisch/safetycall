@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:safetycare/theme.dart';
 import 'package:safetycare/widget/contact.dart';
+import 'package:safetycare/widget/contacts/contacts-main.dart';
 import 'package:safetycare/widget/history.dart';
 import 'package:safetycare/widget/home.dart';
 import 'package:safetycare/widget/settings.dart';
@@ -15,9 +16,10 @@ class BottomNavBarNavigator extends StatefulWidget {
 class _BottomNavBarNavigatorState extends State<BottomNavBarNavigator> {
   final PageController _pageController = PageController(initialPage: 0);
   int _selectedIndex = 0;
-  static const List _widgetOptions = [
+  static  List _widgetOptions = [
     Home(),
-    Contact(),
+    // ContactsMainPage(key: PageStorageKey('contacts-main-page'), title: 'Flutter Contacts',),
+    ContactPage(),
     Hitory(),
     Settings(),
   ];
