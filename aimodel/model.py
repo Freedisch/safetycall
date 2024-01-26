@@ -3,7 +3,8 @@ import cv2
 import numpy as np
 import time
 import PoseModule as pm
-
+import os
+from supabase import create_client, Client
 
 app = Flask(__name__)
 cap1 = cv2.VideoCapture(0)

@@ -1,8 +1,16 @@
+import os
 from flask import Flask, render_template, Response
 import cv2
 import mediapipe as mp
 import time
+from twilio.rest import Client as Client_twilio
+import os
+from supabase import create_client, Client
+import json
+import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
 
+load_dotenv() 
 
 app = Flask(__name__)
 
@@ -10,7 +18,7 @@ mpDraw = mp.solutions.drawing_utils
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
 cap1 = cv2.VideoCapture(0)
-pTime = 0
+
 
 MIN_HEIGHT = 0.5  # adjust this value to change the threshold for detecting fall
 
@@ -26,7 +34,9 @@ def is_falling(pose_landmarks):
 def detect_fall(cap):
     """
     Detects if user has fallen or not"""
-
+    pTime = 0
+    fall_detected = False
+    start_time = 0 
     while True:
         success, img = cap.read()
         if not success:
@@ -38,31 +48,31 @@ def detect_fall(cap):
                                   mpPose.POSE_CONNECTIONS)
             if is_falling(results.pose_landmarks):
                 font = cv2.FONT_HERSHEY_SIMPLEX
-                # Use putText() method for
-                # inserting text on video
-                cv2.putText(img,
-                            'NO FALL DETECTED',
-                            (100, 100),
-                            font, 1,
-                            (0, 255, 0),
-                            2,
-                            cv2.LINE_4)
+                cv2.putText(img, 'NO FALL DETECTED', (100, 100), font, 1, (0, 255, 0), 2, cv2.LINE_4)
                 print("No fall detected")
+                fall_detected = False 
+                
+                    
             else:
-                cv2.putText(img,
-                            'FALL DETECTED',
-                            (50, 50),
-                            font, 1,
-                            (255, 0, 0),
-                            2,
-                            cv2.LINE_4)
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                cv2.putText(img, 'FALL DETECTED', (50, 50), font, 1, (255, 0, 0), 2, cv2.LINE_4)
                 print("Fall detected")
+                
+                if not fall_detected:
+                    # Set the fall_detected flag to True and record the current time
+                    fall_detected = True
+                    start_time = time.time()
+                # Check if 60 seconds have passed since fall detection
+                if time.time() - start_time >= 60:
+                    fall_detected = False
+                    #safe_call() # Reset the flag if no fall is detected
+                
+
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
-        cv2.putText(img, str(int(fps)), (70, 50),
+        cv2.putText(img, str(int(fps)), (50, 100),
                     cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
-        cv2.imshow("Image", img)
         if cv2.waitKey(1) == 27:  # press 'esc' to exit the loop
             break
         ret, buffer = cv2.imencode('.jpg', img)
@@ -74,24 +84,73 @@ def detect_fall(cap):
     cv2.destroyAllWindows()
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+    
 @app.route('/video2')
 def video2():
     return Response(detect_fall(cap1), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 
+def safe_call(num, name):
+    account_sid = os.getenv("SID_NUMBER")
+    auth_token  = os.getenv("TOKEN_NUMBER")
+    trum = str(num)
+    client = Client_twilio(account_sid, auth_token)
 
-# Your Account SID and Auth Token from console.twilio.com
+    message = client.calls.create(
+        url=os.getenv("URL_NUMBER"),
+        to=trum,
+        from_=os.getenv("CALLING_NUMBER"),
+        timeout=100
+        #body='Tests'
+    )
+
+    print(message)
+
+def db_contact():
+    response = supabase.table('contacts').select("*").execute()
+    print(response)
+    return response
+
+
+root = ET.Element("data")
+
+def json_to_xml(json_data, parent):
+    if isinstance(json_data, dict):
+        for key, value in json_data.items():
+            element = ET.SubElement(parent, key)
+            json_to_xml(value, element)
+        
+    else:
+        parent.text = str(json_data)
 
 
 
 @app.route('/call')
 def call():
-    return Response("okay")
+    data = db_contact()
+    json_data = json.dumps(data.data)
+    with open('output.json', 'w') as outfile:
+        json.dump(data.data, outfile)
+    json_to_xml(json_data, root)
+    tree = ET.ElementTree(root)
+    
+    # Save the XML to a file or print it
+    tree.write("output.xml")
+    reverst_data()
+    data = json.loads(json_data)
+    phone = data[2]['phone_number']
+    name = data[2]['name']
+    print("Test", phone)
+    safe_call(phone, name)
+    return Response(json_data)
 
 if __name__ == '__main__':
+    url: str = os.getenv("SUPABASE_URL")
+    key: str = os.getenv("SUPABASE_KEY")
+    supabase: Client = create_client(url, key)
     app.run(debug=True, host='0.0.0.0', port=8000)
