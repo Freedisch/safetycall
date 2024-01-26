@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safetycare/widget/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({Key? key}) : super(key: key);
@@ -14,8 +15,14 @@ class _ContactPageState extends State<ContactPage> {
 
   final List<ContactModel> contacts = [];
 
-  List<String> roleOptions = ["Doctor", "Neighbor", "Friend", "Parent", "Relative"];
-  String selectedRole = "Doctor";
+  List<String> relationshipOptions = [
+    "Doctor",
+    "Neighbor",
+    "Friend",
+    "Parent",
+    "Relative"
+  ];
+  String selectedrelationship = "Doctor";
 
   @override
   void initState() {
@@ -26,21 +33,40 @@ class _ContactPageState extends State<ContactPage> {
   Future<void> _loadContacts() async {
     _prefs = await SharedPreferences.getInstance();
     final savedContacts = _prefs.getStringList('contacts');
-    
+
     if (savedContacts != null) {
       setState(() {
         contacts.clear();
         for (var contactData in savedContacts) {
           final contactInfo = contactData.split(',');
-          contacts.add(ContactModel(contactInfo[0], contactInfo[1], contactInfo[2]));
+          contacts.add(
+              ContactModel(contactInfo[0], contactInfo[1], contactInfo[2]));
         }
       });
     }
   }
 
   Future<void> _saveContacts() async {
-    final contactsData = contacts.map((contact) => '${contact.name},${contact.phoneNumber},${contact.role}').toList();
+    final contactsData = contacts
+        .map((contact) =>
+            '${contact.name},${contact.phoneNumber},${contact.relationship}')
+        .toList();
     await _prefs.setStringList('contacts', contactsData);
+    // add the contact to supabase table
+    print("==================================================================");
+    print(contacts.last);
+    print("================================================================");
+    print(contactToJson(contacts.last));
+    print("==================================================================");
+    try {
+      await Supabase.instance.client
+          .from('contacts')
+          .upsert(contactToJson(contacts.last));
+    } catch (e) {
+      print("========================here is the supabase error");
+      print(e);
+      print("===================================");
+    }
   }
 
   @override
@@ -104,17 +130,17 @@ class _ContactPageState extends State<ContactPage> {
                 decoration: InputDecoration(labelText: "Phone Number"),
               ),
               DropdownButton<String>(
-                hint: Text("Select Role"),
-                value: selectedRole,
+                hint: Text("Select relationship"),
+                value: selectedrelationship,
                 onChanged: (value) {
                   setState(() {
-                    selectedRole = value!;
+                    selectedrelationship = value!;
                   });
                 },
-                items: roleOptions.map((role) {
+                items: relationshipOptions.map((relationship) {
                   return DropdownMenuItem<String>(
-                    value: role,
-                    child: Text(role),
+                    value: relationship,
+                    child: Text(relationship),
                   );
                 }).toList(),
               ),
@@ -129,10 +155,13 @@ class _ContactPageState extends State<ContactPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (name.isNotEmpty && phoneNumber.isNotEmpty && selectedRole.isNotEmpty) {
+                if (name.isNotEmpty &&
+                    phoneNumber.isNotEmpty &&
+                    selectedrelationship.isNotEmpty) {
                   // Add the contact to the list
                   setState(() {
-                    contacts.add(ContactModel(name, phoneNumber, selectedRole));
+                    contacts.add(
+                        ContactModel(name, phoneNumber, selectedrelationship));
                     _saveContacts(); // Save contacts after adding one
                   });
                   Navigator.of(context).pop();
@@ -157,9 +186,9 @@ class _ContactPageState extends State<ContactPage> {
 class ContactModel {
   final String name;
   final String phoneNumber;
-  final String role;
+  final String relationship;
 
-  ContactModel(this.name, this.phoneNumber, this.role);
+  ContactModel(this.name, this.phoneNumber, this.relationship);
 }
 
 class ContactListItem extends StatelessWidget {
@@ -191,12 +220,13 @@ class ContactListItem extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        title: Text(contact.name, style: TextStyle(fontWeight: FontWeight.bold)),
+        title:
+            Text(contact.name, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Row(
           children: [
             Text(contact.phoneNumber),
             Spacer(),
-            Text(contact.role),
+            Text(contact.relationship),
           ],
         ),
       ),
@@ -204,3 +234,19 @@ class ContactListItem extends StatelessWidget {
   }
 }
 
+Map<String, dynamic> contactToJson(ContactModel contact) {
+  dynamic data = {
+    'name': contact.name,
+    'phone_number': contact.phoneNumber,
+    'relationship': contact.relationship,
+  };
+
+  return data;
+}
+
+// create a function to add the contact data to supabase table
+Future<void> addContactToSupabase(ContactModel contact) async {
+  await Supabase.instance.client
+      .from('contacts')
+      .upsert(contactToJson(contact));
+}
