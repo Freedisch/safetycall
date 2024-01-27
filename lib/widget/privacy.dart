@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:safetycare/widget/appbar.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Privacy Policy'),
-      ),
+      appBar: SafetyCallAppBar(appBarTitle: "Privacy Policy"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: RichText(
