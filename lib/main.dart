@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  // await dotenv.load(fileName: 'assets/.env');
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -16,7 +15,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    // this keys will be removed later: this is just for trial
     url: dotenv.env['SUPABASE_DB_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
@@ -30,22 +28,73 @@ class SafetyCall extends StatelessWidget {
     return MaterialApp(
       themeMode: ThemeMode.dark,
       routes: {
-        '/': (context) => BottomNavBarNavigator(),
-        // '/home': (context) => HomePage(
-        //     // htmlFilePath: 'path_to_your_html_file.html',
-        //     // topicTitle: 'Topic Title'),
-        // ),
-        // '/main': (context) => Home(),
-        // '/contact': (context) => ContactPage(),
-        // '/history': (context) => History(),
-        // '/setting': (context) => SettingsPage(),
+        '/': (context) => CameraIdInput(),
       },
-      // remove debug banner
       debugShowCheckedModeBanner: false,
-
       title: 'Recorder',
       theme: ThemeData(),
-      // home: SplashScreen(),
     );
+  }
+}
+
+class CameraIdInput extends StatefulWidget {
+  @override
+  _CameraIdInputState createState() => _CameraIdInputState();
+}
+
+class _CameraIdInputState extends State<CameraIdInput> {
+  final _formKey = GlobalKey<FormState>();
+  String? _cameraId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _showDialog());
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Camera Id'),
+          content: Form(
+            key: _formKey,
+            child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter Camera ID';
+                } else if (value != '2016') {
+                  return 'ID not correct! Please contact admins to\ncalibrate the app with your Camera.';
+                }
+                return null;
+              },
+              onSaved: (value) => _cameraId = value,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => BottomNavBarNavigator(),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
