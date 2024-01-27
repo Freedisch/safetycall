@@ -4,7 +4,7 @@ An emergency alert application.
 
 ## INTRODUCTION
 
-This application is designed to provide assistance in times of emergency, specifically targeting individuals who are susceptible to falls and require immediate help. The app employs both automated fall detection technology and manual alert mechanisms to ensure swift alert to pre-selected contacts.
+This application is designed to provide assistance in times of emergency, specifically targeting individuals who are susceptible to falls and require immediate help. The app employs automated fall detection technology by utilizing pre-installed cameras in user's, and manual alert mechanisms to ensure swift alert to pre-selected contacts.
 
 ## FEATURES
 
