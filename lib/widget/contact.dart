@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safetycare/theme.dart';
 import 'package:safetycare/widget/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -79,7 +80,7 @@ class _ContactPageState extends State<ContactPage> {
           _showAddContactDialog();
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
+        backgroundColor: themeColor,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Container(
@@ -214,7 +215,7 @@ class ContactListItem extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         leading: CircleAvatar(
-          backgroundColor: Colors.blue,
+          backgroundColor: themeColor,
           child: Text(
             contact.name[0],
             style: TextStyle(color: Colors.white),

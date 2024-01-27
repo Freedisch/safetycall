@@ -15,12 +15,12 @@ class BottomNavBarNavigator extends StatefulWidget {
 class _BottomNavBarNavigatorState extends State<BottomNavBarNavigator> {
   final PageController _pageController = PageController(initialPage: 0);
   int _selectedIndex = 0;
-  static  List _widgetOptions = [
-    Home(),
+  static List _widgetOptions = [
+    HomePage(),
     // ContactsMainPage(key: PageStorageKey('contacts-main-page'), title: 'Flutter Contacts',),
     ContactPage(),
-    Hitory(),
-    Settings(),
+    // Hitory(),
+    SettingsPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -59,15 +59,15 @@ class _BottomNavBarNavigatorState extends State<BottomNavBarNavigator> {
                   color: textColor,
                 ),
               ),
-              GButton(
-                icon: Icons.history,
-                text: 'History',
-                textStyle: themeFontFamily.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
+              // GButton(
+              //   icon: Icons.history,
+              //   text: 'History',
+              //   textStyle: themeFontFamily.copyWith(
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.bold,
+              //     color: textColor,
+              //   ),
+              // ),
               GButton(
                 icon: Icons.settings,
                 text: 'Settings',
