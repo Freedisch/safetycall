@@ -20,11 +20,11 @@ pose = mpPose.Pose()
 cap1 = cv2.VideoCapture(0)
 
 
-MIN_HEIGHT = 0.5  # adjust this value to change the threshold for detecting fall
+MIN_HEIGHT = 0.5 
 
+bulk_sms = f""
 
 def is_falling(pose_landmarks):
-    # Check if the height of the hip is lower than the threshold
     hip_height = pose_landmarks.landmark[8].y
     if hip_height < MIN_HEIGHT:
         return True
@@ -59,13 +59,20 @@ def detect_fall(cap):
                 print("Fall detected")
                 
                 if not fall_detected:
-                    # Set the fall_detected flag to True and record the current time
                     fall_detected = True
                     start_time = time.time()
-                # Check if 60 seconds have passed since fall detection
                 if time.time() - start_time >= 60:
                     fall_detected = False
-                    #safe_call() # Reset the flag if no fall is detected
+                    data = db_contact()
+                    json_data = json.dumps(data.data)
+                    data = json.loads(json_data)
+                    for i in data:
+                        phone = i['phone_number']
+                        name = i['name']
+                        print("Test", phone)
+                        print("Test", name)
+                        safe_call(phone, name)
+                        safe_message(phone, name)
                 
 
         cTime = time.time()
@@ -103,13 +110,29 @@ def safe_call(num, name):
 
     message = client.calls.create(
         url=os.getenv("URL_NUMBER"),
-        to=trum,
-        from_=os.getenv("CALLING_NUMBER"),
+        to="+250791349797",
+        from_=os.getenv("CALLING_NUMBER_SMS"),
         timeout=100
         #body='Tests'
     )
 
     print(message)
+
+def safe_message(num, name):
+    account_sid = os.getenv("SID_NUMBER")
+    auth_token  = os.getenv("TOKEN_NUMBER")
+    trum = str(num)
+    client = Client_twilio(account_sid, auth_token)
+
+    message = client.messages.create(
+        #url=os.getenv("URL_NUMBER"),
+        to=trum,
+        from_=os.getenv("CALLING_NUMBER_SMS"),
+        #timeout=100,
+        body=f"This is SafetyCall. We are reaching out to notify you that {name} is currently experiencing a seizure and are currently on the ground. We are taking immediate action to send you their current location for prompt assistance. Your swift attention is crucial. Kindly ensure you act promptly and take appropriate measures to assist your friend. If you have any questions or require further information, please do not hesitate to contact us. Thank you for your cooperation."
+    )
+    print(message)
+
 
 def db_contact():
     response = supabase.table('contacts').select("*").execute()
@@ -171,10 +194,13 @@ def call():
     tree.write("output.xml")
     reverst_data()
     data = json.loads(json_data)
-    phone = data[2]['phone_number']
-    name = data[2]['name']
-    print("Test", phone)
-    safe_call(phone, name)
+    for i in data:
+        phone = i['phone_number']
+        name = i['name']
+        print("Test", phone)
+        print("Test", name)
+    #safe_call(phone, name)
+    #safe_message(phone, name)
     return Response(json_data)
 
 if __name__ == '__main__':
