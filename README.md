@@ -27,6 +27,6 @@ This application is designed to provide assistance in times of emergency, specif
 ## CONTRIBUTORS
 
 - [Thibaut Batale](https://github.com/Freedisch)
-- Samuel Olubode
+- [Samuel Olubode](https://github.com/SundayOlubode)
 - Wubeshet Yimam
 - Martin Ndungu
