@@ -1,16 +1,32 @@
-# safetycare
+# SAFETYCARE
 
-A new Flutter project.
+An emergency alert application.
 
-## Getting Started
+## INTRODUCTION
 
-This project is a starting point for a Flutter application.
+This application is designed to provide assistance in times of emergency, specifically targeting individuals who are susceptible to falls and require immediate help. The app employs both automated fall detection technology and manual alert mechanisms to ensure swift alert to pre-selected contacts.
 
-A few resources to get you started if this is your first Flutter project:
+## FEATURES
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Camera-based Fall Detection**: The app utilizes installed cameras in the user's house to detect falls automatically. This feature is particularly useful for individuals who are prone to falling due to health conditions.
+-
+- **Manual Alert Button**: Users can also manually trigger alerts by pressing a dedicated button within the mobile application interface. This allows for quick and easy communication with emergency contacts when needed.
+-
+- **Contact List Management**: Users can pre-select a list of emergency contacts within the app. These contacts will receive notifications in case of an emergency, ensuring that help can be swiftly summoned.
+-
+- **Location Sharing**: The app can share the user's location with emergency contacts, helping responders locate them quickly in case of an emergency.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## USAGE
+
+- **Fall Detection**: Allow pre-installed cameras to monitor your movements while you go about your daily activities. If a fall is detected, the app will automatically trigger an alert to your emergency contacts.
+
+- **Manual Alert**: In case of an emergency that does not involve a fall, open the app and press the manual alert button. This will immediately notify your chosen emergency contacts of the situation.
+
+- **Response**: Once an alert is triggered, your emergency contacts will receive notifications according to your configured preferences. Responders can then take appropriate action to assist you.
+
+## CONTRIBUTORS
+
+- Thibaut Batale
+- Samuel Olubode
+- Wubeshet Yimam
+- Martin Ndungu
