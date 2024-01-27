@@ -1,4 +1,4 @@
-# safetycare
+# SafetyCall
 
 A new Flutter project.
 
