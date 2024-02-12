@@ -11,7 +11,6 @@ message = client.calls.create(
         to="",
         from_=os.getenv("CALLING_NUMBER"),
         timeout=100
-        #body='Tests'
 )
 
 print(message)
