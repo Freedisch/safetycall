@@ -170,9 +170,6 @@ def reverst_data():
     if say_element is not None:
         say_element.text = say_element.text.replace('Friend', name)
 
-    # Save the modified XML
-    # with open('response.xml', 'w') as file:
-    #     file.write(ET.tostring(response_tree).decode('utf-8'))
     output_xml = ET.tostring(response_tree, encoding='utf-8').decode('utf-8')
     output_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + output_xml
 
@@ -199,8 +196,7 @@ def call():
         name = i['name']
         print("Test", phone)
         print("Test", name)
-    #safe_call(phone, name)
-    #safe_message(phone, name)
+
     return Response(json_data)
 
 if __name__ == '__main__':
