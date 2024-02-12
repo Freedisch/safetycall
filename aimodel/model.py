@@ -8,9 +8,6 @@ from supabase import create_client, Client
 
 app = Flask(__name__)
 cap1 = cv2.VideoCapture(0)
-# video = pafy.new("https://www.youtube.com/watch?v=Ic1f9wKjoJg")
-# best = video.getbest(preftype="mp4")
-# cap2 = cv2.VideoCapture(best.url)
 
 
 def generate_frames(cap):
@@ -21,10 +18,9 @@ def generate_frames(cap):
     while True:
         success, img = cap.read()
         img = cv2.resize(img, (1280, 550))
-        # img = cv2.imread("AiTrainer/test.jpg")
         img = detector.findPose(img, False)
         lmList = detector.findPosition(img, False)
-        # print(lmList)
+
         if len(lmList) != 0:
             # Right Arm
             angle = detector.findAngle(img, 12, 24, 26)
@@ -34,7 +30,7 @@ def generate_frames(cap):
                 fall = True
             else:
                 fall = False
-            # print(fall)
+                
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
@@ -54,9 +50,6 @@ def index():
 @app.route('/video1')
 def video1():
     return Response(generate_frames(cap1), mimetype='multipart/x-mixed-replace; boundary=frame')
-# @app.route('/video2')
-# def video2():
-#     return Response(generate_frames(cap2), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 if __name__ == '__main__':
