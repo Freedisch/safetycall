@@ -14,7 +14,6 @@ class poseDetector():
 
         self.mpPose = mp.solutions.pose
         self.mpDraw = mp.solutions.drawing_utils
-        #self.pose = self.mpPose.Pose(self.mode, self.upBody, self.smooth, self.detectionCon, self.trackCon)
         self.pose = self.mpPose.Pose(self.mode, 1, True, self.upBody, self.smooth, self.detectionCon, self.trackCon)
 
     def findPose(self, img, draw=True):
@@ -24,11 +23,6 @@ class poseDetector():
             if draw:
                 self.mpDraw.draw_landmarks(img, results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
         return img
-    # for id, lm in enumerate(results.pose_landmarks.landmark):
-    #     h, w, c = img.shape
-    #     cx, cy = int(lm.x * w), int(lm.y * h)
-    #     cv2.circle(img, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
-
 
 def main():
     cap = cv2.VideoCapture(0)
